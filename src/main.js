@@ -287,7 +287,7 @@ function generateRandomPoster() {
   mainPosterTitle.innerText=currentPoster.title
   mainPosterQuote.innerText=currentPoster.quote
 
-  savePosterButton.addEventListener("click",savePoster)
+  //savePosterButton.addEventListener("click",savePoster)
 }
 
 function showPosterForm() {
@@ -321,9 +321,25 @@ function showUnmotivationalPosters() {
 }
 
 function savePoster() {
-  var newPoster = createPoster(mainPosterImage.src,mainPosterTitle.innerText,mainPosterQuote.innerText)
-  savedPosters.push(newPoster)
-  savePosterButton.removeEventListener("click",savePoster)
+  //var newPoster = createPoster(mainPosterImage.src,mainPosterTitle.innerText,mainPosterQuote.innerText)
+  checkIfDuplicate(currentPoster)
+  // if(savedPosters.includes(newPoster)===false) {
+  //   console.log(newPoster)
+  //   console.log(savedPosters)
+  //   savedPosters.push(newPoster)
+  // }
+  //savedPosters.push(newPoster)
+  //savePosterButton.removeEventListener("click",savePoster)
+}
+
+function checkIfDuplicate(poster) {
+  tempPoster = poster
+  tempSavedPosters=savedPosters
+  delete tempPoster.id
+  delete tempSavedPosters.id
+  if(tempSavedPosters.includes(tempPoster)===false) {
+    savedPosters.push(poster)
+  }
 }
 
 function showSavedMiniPosters() {
@@ -347,11 +363,12 @@ function makeNewPoster(event) {
   var url = posterImageURL.value
   var title = posterTitle.value
   var quote = posterQuote.value
-  mainPosterImage.src=url
-  mainPosterTitle.innerText = title
-  mainPosterQuote.innerText = quote
+  currentPoster = createPoster(url,title,quote)
+  mainPosterImage.src=currentPoster.imageURL
+  mainPosterTitle.innerText = currentPoster.title
+  mainPosterQuote.innerText = currentPoster.quote
   updateArrays(url,title,quote)
-  savePosterButton.addEventListener("click",savePoster)
+  //savePosterButton.addEventListener("click",savePoster)
 }
 
 function updateArrays(url,title,quote) {

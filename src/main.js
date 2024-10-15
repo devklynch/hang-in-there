@@ -282,12 +282,7 @@ function generateRandomPoster() {
   var quotesIndex = getRandomIndex(quotes)
 
   currentPoster =createPoster(images[imagesIndex],titles[titlesIndex],quotes[quotesIndex])
-
-  mainPosterImage.src=currentPoster.imageURL
-  mainPosterTitle.innerText=currentPoster.title
-  mainPosterQuote.innerText=currentPoster.quote
-
-  savePosterButton.addEventListener("click",savePoster)
+  mainPosterDisplay(currentPoster)
 }
 
 function showPosterForm() {
@@ -302,7 +297,7 @@ function showSavedPosters() {
   mainPoster.classList.add('hidden')
   savedPostersSection.classList.remove('hidden')
   unmotivationalPostersSection.classList.add('hidden')
-  showSavedMiniPosters()
+  posterDisplay(savedPosters,savedPostersGrid)
 }
 
 function showMain() {
@@ -317,29 +312,36 @@ function showUnmotivationalPosters() {
   mainPoster.classList.add('hidden')
   savedPostersSection.classList.add('hidden')
   unmotivationalPostersSection.classList.remove('hidden')
-  showUnmotivationalMiniPosters()
+  cleanData()
+  posterDisplay(unmotivationalPostersArray,unmotivationalPostersGrid,"unmotivational")
 }
 
 function savePoster() {
-  var newPoster = createPoster(mainPosterImage.src,mainPosterTitle.innerText,mainPosterQuote.innerText)
-  savedPosters.push(newPoster)
-  savePosterButton.removeEventListener("click",savePoster)
+  tempPoster = currentPoster
+  tempSavedPosters=savedPosters
+  delete tempPoster.id
+  delete tempSavedPosters.id
+  if(tempSavedPosters.includes(tempPoster)===false) {
+    savedPosters.push(currentPoster)
+  }
 }
 
-function showSavedMiniPosters() {
-  savedPostersGrid.innerHTML = ""
-for (i = 0; i < savedPosters.length; i++) {
-  var url = savedPosters[i].imageURL
-  var title = savedPosters[i].title
-  var quote = savedPosters[i].quote
-  savedPostersGrid.innerHTML +=
-    miniPosterHTML= 
-    `<div class='mini-poster'>
-      <img src=${url}>
-      <h2>${title}</h2>
-      <h4>${quote}</h4>
-    </div>`
-}}
+function posterDisplay(posterArray,gridSection,addClass) {
+  gridSection.innerHTML = ""
+  var posterDisplay = posterArray.forEach((poster) => {
+    var url = poster.imageURL
+    var title = poster.title
+    var quote = poster.quote
+    gridSection.innerHTML +=
+      miniPosterHTML= 
+      `<div class='mini-poster ${addClass}'>
+        <img src=${url}>
+        <h2>${title}</h2>
+        <h4>${quote}</h4>
+      </div>`
+  })
+  return posterDisplay
+}
 
 function makeNewPoster(event) {
   event.preventDefault()
@@ -347,11 +349,15 @@ function makeNewPoster(event) {
   var url = posterImageURL.value
   var title = posterTitle.value
   var quote = posterQuote.value
-  mainPosterImage.src=url
-  mainPosterTitle.innerText = title
-  mainPosterQuote.innerText = quote
+  currentPoster = createPoster(url,title,quote)
+  mainPosterDisplay(currentPoster)
   updateArrays(url,title,quote)
-  
+}
+
+function mainPosterDisplay(currentPoster) {
+  mainPosterImage.src=currentPoster.imageURL
+  mainPosterTitle.innerText = currentPoster.title
+  mainPosterQuote.innerText = currentPoster.quote
 }
 
 function updateArrays(url,title,quote) {
@@ -370,37 +376,31 @@ function cleanData() {
 
 function showUnmotivationalMiniPosters() {
   cleanData()
-  unmotivationalPostersGrid.innerHTML = ""
-  for (i = 0; i < unmotivationalPostersArray.length; i++) {
-    var url = unmotivationalPostersArray[i].imageURL
-    var title = unmotivationalPostersArray[i].title
-    var quote = unmotivationalPostersArray[i].quote
-    unmotivationalPostersGrid.innerHTML +=
-      miniPosterHTML= 
-      `<div class='mini-poster unmotivational'>
-        <img src=${url}>
-        <h2>${title}</h2>
-        <h4>${quote}</h4>
-      </div>`
-  }}
+  posterDisplay(unmotivationalPostersArray,unmotivationalPostersGrid,"unmotivational")
+}
+
 
   function deleteUnmotivationalPoster() {
-    if(event.target.classList.contains('mini-poster')) {
-      poster = event.target
-      poster.remove()
-
+    if(event.target.closest('.mini-poster')) {
+      if(event.target.classList.contains('mini-poster')) {
+        parentPoster = event.target
+        parentPosterposter.remove()
+      } else  {
+        parentPoster = event.target.parentElement
+        parentPoster.remove()
+      }
     }
-    removePosterFromArray()
+    removePosterFromArray(parentPoster)
   }
 
-  function removePosterFromArray() {
-    var indexDelete = findIndexofUnmotivationalPoster()
+  function removePosterFromArray(poster) {
+    var indexDelete = findIndexofUnmotivationalPoster(parentPoster)
     unmotivationalPosters.splice(indexDelete,1)
     console.log(unmotivationalPosters)
   }
 
-  function findIndexofUnmotivationalPoster() {
-    deletedTitle = event.target.querySelector('h2').innerText
+  function findIndexofUnmotivationalPoster(selectedPoster) {
+    deletedTitle = selectedPoster.querySelector('h2').innerText
     const deletedPosterIndex = unmotivationalPosters.findIndex((poster) => {
       return poster.name === deletedTitle
     })

@@ -351,7 +351,7 @@ function makeNewPoster(event) {
   mainPosterTitle.innerText = title
   mainPosterQuote.innerText = quote
   updateArrays(url,title,quote)
-  
+  savePosterButton.addEventListener("click",savePoster)
 }
 
 function updateArrays(url,title,quote) {

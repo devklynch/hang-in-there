@@ -280,7 +280,6 @@ function generateRandomPoster() {
   var imagesIndex = getRandomIndex(images)
   var titlesIndex = getRandomIndex(titles)
   var quotesIndex = getRandomIndex(quotes)
-
   currentPoster =createPoster(images[imagesIndex],titles[titlesIndex],quotes[quotesIndex])
   mainPosterDisplay(currentPoster)
 }
@@ -297,7 +296,7 @@ function showSavedPosters() {
   mainPoster.classList.add('hidden')
   savedPostersSection.classList.remove('hidden')
   unmotivationalPostersSection.classList.add('hidden')
-  posterDisplay(savedPosters,savedPostersGrid)
+  posterDisplay(savedPosters,savedPostersGrid, "mini-poster")
 }
 
 function showMain() {
@@ -313,7 +312,7 @@ function showUnmotivationalPosters() {
   savedPostersSection.classList.add('hidden')
   unmotivationalPostersSection.classList.remove('hidden')
   cleanData()
-  posterDisplay(unmotivationalPostersArray,unmotivationalPostersGrid,"unmotivational")
+  posterDisplay(unmotivationalPostersArray,unmotivationalPostersGrid,"mini-poster unmotivational")
 }
 
 function savePoster() {
@@ -334,11 +333,11 @@ function posterDisplay(posterArray,gridSection,addClass) {
     var quote = poster.quote
     gridSection.innerHTML +=
       miniPosterHTML= 
-      `<div class='mini-poster ${addClass}'>
-        <img src=${url}>
-        <h2>${title}</h2>
-        <h4>${quote}</h4>
-      </div>`
+        `<div class='${addClass}'>
+          <img src=${url}>
+          <h2>${title}</h2>
+          <h4>${quote}</h4>
+        </div>`
   })
   return posterDisplay
 }
@@ -379,12 +378,11 @@ function showUnmotivationalMiniPosters() {
   posterDisplay(unmotivationalPostersArray,unmotivationalPostersGrid,"unmotivational")
 }
 
-
   function deleteUnmotivationalPoster() {
     if(event.target.closest('.mini-poster')) {
       if(event.target.classList.contains('mini-poster')) {
         parentPoster = event.target
-        parentPosterposter.remove()
+        parentPoster.remove()
       } else  {
         parentPoster = event.target.parentElement
         parentPoster.remove()
@@ -394,9 +392,8 @@ function showUnmotivationalMiniPosters() {
   }
 
   function removePosterFromArray(poster) {
-    var indexDelete = findIndexofUnmotivationalPoster(parentPoster)
+    var indexDelete = findIndexofUnmotivationalPoster(poster)
     unmotivationalPosters.splice(indexDelete,1)
-    console.log(unmotivationalPosters)
   }
 
   function findIndexofUnmotivationalPoster(selectedPoster) {
